@@ -1,0 +1,43 @@
+services:
+  reseller_jh_db:
+    image: postgres
+    container_name: reseller_jh_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_DB_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+    ports:
+      - "${POSTGRES_DB_PORT}:${POSTGRES_DB_PORT}"
+    networks:
+      - reseller_jh_network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  reseller_jh_be:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: reseller_jh_be
+    container_name: reseller_jh_be
+    volumes:
+      - ./:/backend_app/
+    working_dir: /backend_app
+    ports:
+      - 9001:9001
+    networks:
+      - reseller_jh_network
+    depends_on:
+      reseller_jh_db:
+        condition: service_healthy  
+
+networks:
+  reseller_jh_network:
+    driver: bridge
+
+volumes:
+  pgdata:

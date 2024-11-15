@@ -1,0 +1,16 @@
+# Config file for air
+[build]
+  cmd = "go build -o ./tmp/main"    # Command to build your project
+  bin = "./tmp/main"                # Path to output binary
+  delay = 1000                      # Delay restart by 1000 milliseconds to stabilize builds
+  include_ext = ["go", "tmpl", "tpl", "html"]  # File extensions to watch
+  exclude_dir = ["vendor", "tmp"]   # Exclude unnecessary directories
+  exclude_regex = ["_test.go"]      # Exclude test files
+  full_bin = "APP_ENV=dev ./tmp/main"  # Run the app with `dev` environment variable
+  poll = true # Poll files for changes instead of using fsnotify.
+
+[log]
+  level = "info"                    # Log level; "info" gives necessary output without too much detail
+
+[watcher]
+  debounce = 200                    # Set debounce to minimize rapid restarts
