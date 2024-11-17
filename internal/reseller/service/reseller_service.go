@@ -124,3 +124,21 @@ func (s *ResellerService) DeleteReseller(id string) (err error) {
 
 	return nil
 }
+
+func (s *ResellerService) CountResellers(reqReseller request.ReqReseller) (reseller response.RespResellerDashboard, err error) {
+	reseller, err = s.Repo.CountResellers(reqReseller)
+	if err != nil {
+		return reseller, err
+	}
+
+	return reseller, nil
+}
+
+func (s *ResellerService) ResellersChart(reqReseller request.ReqReseller) (resp response.RespResellerChart, err error) {
+	resp, err = s.Repo.ResellersChart(reqReseller)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
+}

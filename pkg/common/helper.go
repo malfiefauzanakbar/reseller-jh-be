@@ -1,8 +1,15 @@
 package common
 
-import (
+import (	
 	"strconv"
 	"strings"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"encoding/base64"
+	"errors"	
+	"io"
+	"os"
 
 	"reseller-jh-be/base"
 
@@ -35,7 +42,7 @@ func HandlePagination(totalItems int, reqPagination base.ReqPagination) (paginat
 }
 
 func HashPassword(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)	
 	if err != nil {
 		return "", err
 	}
@@ -45,4 +52,63 @@ func HashPassword(password string) (string, error) {
 func CheckPassword(hashedPassword, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	return err == nil
+}
+
+func Encrypt(plainText string) (string, error) {	
+	key := os.Getenv("SECRET_KEY")
+	keyBytes := []byte(key)
+	plainTextBytes := []byte(plainText)
+	
+	block, err := aes.NewCipher(keyBytes)
+	if err != nil {
+		return "", err
+	}
+	
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+	
+	nonce := make([]byte, aesGCM.NonceSize())
+	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+		return "", err
+	}
+	
+	cipherText := aesGCM.Seal(nil, nonce, plainTextBytes, nil)
+	
+	result := append(nonce, cipherText...)
+	
+	return base64.StdEncoding.EncodeToString(result), nil
+}
+
+func Decrypt(cipherText string) (string, error) {	
+	key := os.Getenv("SECRET_KEY")
+	keyBytes := []byte(key)
+	cipherTextBytes, err := base64.StdEncoding.DecodeString(cipherText)
+	if err != nil {
+		return "", err
+	}
+	
+	block, err := aes.NewCipher(keyBytes)
+	if err != nil {
+		return "", err
+	}
+	
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+	
+	nonceSize := aesGCM.NonceSize()
+	if len(cipherTextBytes) < nonceSize {
+		return "", errors.New("ciphertext too short")
+	}
+	nonce, cipherTextBytes := cipherTextBytes[:nonceSize], cipherTextBytes[nonceSize:]
+	
+	plainText, err := aesGCM.Open(nil, nonce, cipherTextBytes, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(plainText), nil
 }

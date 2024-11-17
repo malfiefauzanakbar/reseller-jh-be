@@ -16,3 +16,19 @@ type RespReseller struct {
 	StatusName   string    `json:"status_name" gorm:"size:50;not null"`
 	CreatedAt    time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
+
+type RespResellerDashboard struct {	
+	Total     int64     `json:"total" gorm:"not null"`
+	Unread     int64     `json:"unread" gorm:"not null"`
+	Read     int64     `json:"read" gorm:"not null"`
+}
+
+type ResellerChart struct {
+	Date  string
+	Count int
+}
+
+type RespResellerChart struct {
+	Categories  []string `json:"categories"`
+	Data []int `json:"data"`
+}

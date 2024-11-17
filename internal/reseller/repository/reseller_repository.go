@@ -76,3 +76,55 @@ func (r *ResellerRepository) UpdateReseller(reseller *model.Reseller) error {
 func (r *ResellerRepository) DeleteReseller(ID int64) error {
 	return r.DB.Delete(model.Reseller{ID: ID}).Error
 }
+
+func (r *ResellerRepository) CountResellers(reqReseller request.ReqReseller) (reseller response.RespResellerDashboard, err error) {
+	query := r.DB.Model(&model.Reseller{})
+
+	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
+		query = query.Where("DATE(created_at) BETWEEN ? AND ? ", reqReseller.StartDate, reqReseller.EndDate)		
+	}
+
+	if err = query.Count(&reseller.Total).Error; err != nil {	
+		return reseller, err
+	}
+
+	if err = query.Where("status_id = 1").Count(&reseller.Unread).Error; err != nil {
+		return reseller, err
+	}
+
+	if err = query.Where("status_id = 2").Count(&reseller.Read).Error; err != nil {
+		return reseller, err
+	}	
+
+	return reseller, nil
+}
+
+func (r *ResellerRepository)ResellersChart(reqReseller request.ReqReseller) (resp response.RespResellerChart, err error) {
+	var results []response.ResellerChart
+	query := `
+		SELECT 
+			TO_CHAR(created_at, 'DD Mon') AS date,
+			COUNT(*) AS count
+		FROM resellers
+		WHERE DATE(created_at) BETWEEN $1 AND $2
+		GROUP BY TO_CHAR(created_at, 'DD Mon')
+		ORDER BY MIN(created_at)
+	`
+
+	if err = r.DB.Raw(query, reqReseller.StartDate, reqReseller.EndDate).Scan(&results).Error; err != nil {
+		return resp, err
+	}
+
+	var categories []string
+	var data []int
+
+	for _, result := range results {
+		categories = append(categories, result.Date)
+		data = append(data, result.Count)
+	}
+
+	resp.Categories = categories
+	resp.Data = data
+
+	return resp, nil
+}

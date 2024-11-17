@@ -1,7 +1,6 @@
 package handler
 
-import (
-	"fmt"
+import (	
 	"net/http"
 
 	"reseller-jh-be/base"
@@ -71,7 +70,7 @@ func (h *ResellerHandler) GetAllReseller(c *gin.Context) {
 		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
 		return
 	}
-	fmt.Println("reqReseller", reqReseller)
+	
 	reqPagination := common.HandleReqPagination(c)
 	resellers, pagination, err := h.Service.GetAllReseller(reqReseller, reqPagination)
 	if err != nil {
@@ -166,4 +165,54 @@ func (h *ResellerHandler) DeleteReseller(c *gin.Context) {
 	}
 
 	base.RespondSuccess(c, constant.Success, nil, nil)
+}
+
+func (h *ResellerHandler) CountResellers(c *gin.Context) {
+	common.Log.Info("===== HANDLER CALLED - CountResellers =====")
+	
+	var reqReseller request.ReqReseller
+	if err := c.ShouldBindQuery(&reqReseller); err != nil {
+		common.Log.Error("Func ShouldBindQuery: ", err)
+
+		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		return
+	}
+	reseller, err := h.Service.CountResellers(reqReseller)
+	if err != nil {
+		common.Log.Error("Func CountResellers: ", err)
+
+		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		return
+	}
+
+	common.Log.WithFields(map[string]interface{}{
+		"data": reseller,
+	}).Info("ReadReseller")
+
+	base.RespondSuccess(c, constant.Success, reseller, nil)
+}
+
+func (h *ResellerHandler) ResellersChart(c *gin.Context) {
+	common.Log.Info("===== HANDLER CALLED - ResellersChart =====")
+	
+	var reqReseller request.ReqReseller
+	if err := c.ShouldBindQuery(&reqReseller); err != nil {
+		common.Log.Error("Func ShouldBindQuery: ", err)
+
+		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		return
+	}
+	resp, err := h.Service.ResellersChart(reqReseller)
+	if err != nil {
+		common.Log.Error("Func ResellersChart: ", err)
+
+		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		return
+	}
+
+	common.Log.WithFields(map[string]interface{}{
+		"data": resp,
+	}).Info("ReadReseller")
+
+	base.RespondSuccess(c, constant.Success, resp, nil)
 }

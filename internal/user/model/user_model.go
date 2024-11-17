@@ -1,6 +1,6 @@
 // /api/v1/users/user.go
 
-package user
+package model
 
 import (
 	"time"
@@ -18,4 +18,6 @@ type User struct {
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 
-var DB *gorm.DB
+func (User) TableName() string {
+	return "users"
+}
