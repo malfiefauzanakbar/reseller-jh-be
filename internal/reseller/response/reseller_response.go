@@ -32,3 +32,7 @@ type RespResellerChart struct {
 	Categories  []string `json:"categories"`
 	Data []int `json:"data"`
 }
+
+type RespExportReseller struct {
+	Filename  string	`json:"filename"`
+}

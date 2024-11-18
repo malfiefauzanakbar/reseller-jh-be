@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"reseller-jh-be/base"
-	"reseller-jh-be/constant"
-	"reseller-jh-be/internal/homepage/model"
+	"reseller-jh-be/constant"	
+	"reseller-jh-be/internal/homepage/request"
 	"reseller-jh-be/internal/homepage/service"
 	"reseller-jh-be/pkg/common"
 
@@ -43,15 +43,21 @@ func (h *HomepageHandler) GetHomepage(c *gin.Context) {
 func (h *HomepageHandler) UpdateHomepage(c *gin.Context) {
 	common.Log.Info("===== HANDLER CALLED - UpdateHomepage =====")
 
-	var reqHomepage model.Homepage
-	if err := c.ShouldBindJSON(&reqHomepage); err != nil {
-		common.Log.Error("Func ShouldBindJSON: ", err)
+	var reqHomepage request.ReqHomepage
+	if err := c.ShouldBind(&reqHomepage); err != nil {
+		common.Log.Error("Func ShouldBind: ", err)
 
 		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
 
-	homepage, err := h.Service.UpdateHomepage(&reqHomepage)
+	file, err := c.FormFile("banner_image")
+	if err != nil {
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
+		return
+	}	
+
+	homepage, err := h.Service.UpdateHomepage(c, &reqHomepage, file)
 	if err != nil {
 		common.Log.Error("Func UpdateHomepage: ", err)
 

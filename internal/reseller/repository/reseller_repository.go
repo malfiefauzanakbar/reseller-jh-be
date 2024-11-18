@@ -1,13 +1,13 @@
 package repository
 
-import (
+import (	
 	"reseller-jh-be/base"
 	"reseller-jh-be/internal/reseller/model"
 	"reseller-jh-be/internal/reseller/request"
 	"reseller-jh-be/internal/reseller/response"
 	"time"
 
-	"gorm.io/gorm"
+	"gorm.io/gorm"	
 )
 
 type ResellerRepository struct {
@@ -34,7 +34,7 @@ func (r *ResellerRepository) CreateReseller(reqReseller *model.Reseller) (*model
 
 func (r *ResellerRepository) GetAllReseller(statusID int64, reqReseller request.ReqReseller, reqPagination base.ReqPagination) (resellers []response.RespReseller, count int64, err error) {
 	query := r.DB.Table("resellers AS r").Select("r.*, s.name AS status_name").
-		Joins("left join public.status s on r.id = s.id").
+		Joins("inner join public.status s on r.status_id = s.id").
 		Order("r.created_at desc").Limit(reqPagination.PageSize).Offset((reqPagination.Page - 1) * reqPagination.PageSize)
 
 	if reqPagination.Keyword != "" {
@@ -42,7 +42,7 @@ func (r *ResellerRepository) GetAllReseller(statusID int64, reqReseller request.
 	}
 
 	if statusID > 0 {
-		query = query.Where("status_id = ? ", statusID)
+		query = query.Where("r.status_id = ? ", statusID)
 	}
 
 	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
@@ -158,4 +158,25 @@ func (r *ResellerRepository) ResellersChart(reqReseller request.ReqReseller) (re
 	resp.Data = data
 
 	return resp, nil
+}
+
+func (r *ResellerRepository)ExportExcelResellers(statusID int64, reqReseller request.ReqReseller) (resellers []response.RespReseller, err error) {		
+	query := r.DB.Table("resellers AS r").Select("r.*, s.name AS status_name").
+		Joins("inner join public.status s on r.status_id = s.id").
+		Order("r.created_at desc")	
+
+	if statusID > 0 {
+		query = query.Where("r.status_id = ? ", statusID)
+	}
+
+	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
+		query = query.Where("DATE(r.created_at) BETWEEN ? AND ? ", reqReseller.StartDate, reqReseller.EndDate)
+	}
+
+	err = query.Find(&resellers).Error
+	if err != nil {
+		return resellers, err
+	}
+
+	return resellers, err
 }

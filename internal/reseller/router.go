@@ -1,14 +1,12 @@
 package reseller
 
-import (
+import (	
 	"reseller-jh-be/internal"
 	"reseller-jh-be/internal/reseller/handler"
 	"reseller-jh-be/internal/reseller/repository"
 	"reseller-jh-be/internal/reseller/service"
 	"reseller-jh-be/pkg/common"
-
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
+	
 )
 
 func RegisterRoute(app *internal.Application) {
@@ -22,9 +20,7 @@ func RegisterRoute(app *internal.Application) {
 		route.GET("/count-reseller", resellerHandler.CountResellers)
 		route.GET("/reseller-chart", resellerHandler.ResellersChart)
 
-		resellerRoutes := route.Group("/reseller")
-		store := cookie.NewStore([]byte("secret"))
-		resellerRoutes.Use(sessions.Sessions("mysession", store))
+		resellerRoutes := route.Group("/reseller")		
 		resellerRoutes.Use(common.AuthMiddleware())
 		{
 			resellerRoutes.GET("", resellerHandler.GetAllReseller)
@@ -32,6 +28,7 @@ func RegisterRoute(app *internal.Application) {
 			resellerRoutes.PUT("/:id", resellerHandler.UpdateReseller)
 			resellerRoutes.PUT("/read/:id", resellerHandler.ReadReseller)
 			resellerRoutes.DELETE("/:id", resellerHandler.DeleteReseller)
+			resellerRoutes.GET("/export/excel", resellerHandler.ExportExcelResellers)
 		}
 	}
 }

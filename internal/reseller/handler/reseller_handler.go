@@ -216,3 +216,29 @@ func (h *ResellerHandler) ResellersChart(c *gin.Context) {
 
 	base.RespondSuccess(c, constant.Success, resp, nil)
 }
+
+func (h *ResellerHandler) ExportExcelResellers(c *gin.Context) {
+	common.Log.Info("===== HANDLER CALLED - ExportExcelResellers =====")
+
+	var reqReseller request.ReqReseller
+	if err := c.ShouldBindQuery(&reqReseller); err != nil {
+		common.Log.Error("Func ShouldBindQuery: ", err)
+
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
+		return
+	}
+	
+	resp, err := h.Service.ExportExcelResellers(reqReseller)
+	if err != nil {
+		common.Log.Error("Func ExportExcelResellers: ", err)
+
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
+		return
+	}
+
+	common.Log.WithFields(map[string]interface{}{
+		"data": resp,
+	}).Info("ExportExcelResellers")
+
+	base.RespondSuccess(c, constant.Success, resp, nil)	
+}

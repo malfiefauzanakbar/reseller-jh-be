@@ -26,7 +26,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		token := parts[1]
 		decryptToken, err := Decrypt(token)
 		if err != nil {
-			base.RespondError(c, http.StatusInternalServerError, constant.Unauthorized, err)
+			base.RespondError(c, http.StatusUnauthorized, constant.Unauthorized, err)
 			c.Abort()
 			return
 		}
@@ -40,16 +40,19 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		now := time.Now()
 		dateTime := now.Format("2006-01-02 15:04:05")
-		if session.Get("lastAccessed") == nil {
+		if session.Get("lastAccessed") == nil {			
 			session.Set("lastAccessed", dateTime)
-			session.Save()
-		} else {
-			lastAccessed, err := time.Parse("2006-01-02 15:04:05", fmt.Sprintf("%v", session.Get("lastAccessed")))
-			if err != nil {
-				fmt.Println("Error parsing dateTime:", err)
+			session.Save()			
+		} else {			
+			localLocation := time.Now().Location()
+			lastAccessed, err := time.ParseInLocation("2006-01-02 15:04:05", fmt.Sprintf("%v", session.Get("lastAccessed")), localLocation)
+			if err != nil {				
+				base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err)
 				return
-			}
-			if time.Since(lastAccessed) > time.Minute {
+			}			
+			
+			duration := now.Sub(lastAccessed)					
+			if duration >= time.Hour {
 				session.Clear()
 				base.RespondError(c, 440, constant.SessionExpired, nil)
 				c.Abort()
@@ -57,7 +60,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			} else {
 				session.Set("lastAccessed", dateTime)
 				session.Save()
-			}
+			}			
 		}
 
 		c.Next()

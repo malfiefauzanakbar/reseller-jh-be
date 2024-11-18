@@ -1,7 +1,10 @@
 package service
 
 import (
+	"os"
 	"strconv"
+	"time"
+	"path/filepath"
 
 	"reseller-jh-be/base"
 	"reseller-jh-be/internal/reseller/model"
@@ -9,6 +12,8 @@ import (
 	"reseller-jh-be/internal/reseller/request"
 	"reseller-jh-be/internal/reseller/response"
 	"reseller-jh-be/pkg/common"
+
+	"github.com/xuri/excelize/v2"
 )
 
 type ResellerService struct {
@@ -139,6 +144,66 @@ func (s *ResellerService) ResellersChart(reqReseller request.ReqReseller) (resp 
 	if err != nil {
 		return resp, err
 	}
+
+	return resp, nil
+}
+
+func (s *ResellerService) ExportExcelResellers(reqReseller request.ReqReseller) (resp response.RespExportReseller, err error) {
+	statusID, _ := strconv.ParseInt(reqReseller.Type, 10, 64)
+	resellers, err := s.Repo.ExportExcelResellers(statusID, reqReseller)
+	if err != nil {
+		return resp, err
+	}
+	localLocation := time.Now().Location()	
+	parseStartDate, err := time.ParseInLocation("2006-01-02", reqReseller.StartDate, localLocation)
+	if err != nil {				
+		return resp, err		
+	}
+	startDate := parseStartDate.Format("02 Jan 2006")
+	parseEndDate, err := time.ParseInLocation("2006-01-02", reqReseller.EndDate, localLocation)
+	if err != nil {				
+		return resp, err		
+	}
+	endDate := parseEndDate.Format("02 Jan 2006")
+	f := excelize.NewFile()
+	
+	sheetName := "Sheet1"	
+	f.NewSheet(sheetName)
+	f.SetCellValue(sheetName, "A1", "Periode")
+	f.SetCellValue(sheetName, "B1", startDate+" - "+endDate)
+
+	f.SetCellValue(sheetName, "A3", "Nama Lengkap")
+	f.SetCellValue(sheetName, "B3", "Whatsapp")
+	f.SetCellValue(sheetName, "C3", "NIK")
+	f.SetCellValue(sheetName, "D3", "Alamat")
+	f.SetCellValue(sheetName, "E3", "Status")	
+	f.SetCellValue(sheetName, "F3", "Email")
+	f.SetCellValue(sheetName, "G3", "Tanggal Daftar")
+
+	for i, reseller := range resellers {
+		row := i + 4
+		formattedCreatedAt := reseller.CreatedAt.Format("02 Jan 2006")
+		f.SetCellValue(sheetName, "A"+strconv.Itoa(row), reseller.Fullname)
+		f.SetCellValue(sheetName, "B"+strconv.Itoa(row), reseller.WhatsappNo)
+		f.SetCellValue(sheetName, "C"+strconv.Itoa(row), reseller.NIK)
+		f.SetCellValue(sheetName, "D"+strconv.Itoa(row), reseller.Address)
+		f.SetCellValue(sheetName, "E"+strconv.Itoa(row), reseller.StatusName)
+		f.SetCellValue(sheetName, "F"+strconv.Itoa(row), reseller.Email)
+		f.SetCellValue(sheetName, "G"+strconv.Itoa(row), formattedCreatedAt)
+	}
+		
+	if _, err := os.Stat("./uploads"); os.IsNotExist(err) {
+		os.Mkdir("./uploads", os.ModePerm)
+	}
+
+	folderPath := "./uploads/"
+	fileName := "reseller.xlsx"
+    filePath := filepath.Join(folderPath, fileName)
+	if err := f.SaveAs(filePath); err != nil {		
+		return resp, err
+	}	
+
+	resp.Filename = os.Getenv("DIR_FILE")+"uploads/"+fileName	
 
 	return resp, nil
 }

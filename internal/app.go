@@ -6,6 +6,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 )
 
 type Application struct {
@@ -16,6 +18,9 @@ type Application struct {
 
 func NewApp(cfg *config.Config) *Application {
 	r := gin.Default()
+	store := cookie.NewStore([]byte("secret"))
+	r.Static("/uploads", "./uploads")
+	r.Use(sessions.Sessions("session", store))
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},

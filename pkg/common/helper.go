@@ -57,7 +57,7 @@ func CheckPassword(hashedPassword, password string) bool {
 }
 
 func Encrypt(plainText string) (string, error) {
-	key := os.Getenv("ENCYPTION_KEY")
+	key := os.Getenv("ENCRYPTION_KEY")
 	keyBytes := []byte(key)
 	plainTextBytes := []byte(plainText)
 
@@ -84,7 +84,7 @@ func Encrypt(plainText string) (string, error) {
 }
 
 func Decrypt(cipherText string) (string, error) {
-	key := os.Getenv("ENCYPTION_KEY")
+	key := os.Getenv("ENCRYPTION_KEY")
 	keyBytes := []byte(key)
 	cipherTextBytes, err := base64.StdEncoding.DecodeString(cipherText)
 	if err != nil {
