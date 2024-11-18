@@ -2,8 +2,8 @@ package router
 
 import (
 	"reseller-jh-be/internal"
-	"reseller-jh-be/internal/reseller"
 	"reseller-jh-be/internal/homepage"
+	"reseller-jh-be/internal/reseller"
 	"reseller-jh-be/internal/user"
 )
 

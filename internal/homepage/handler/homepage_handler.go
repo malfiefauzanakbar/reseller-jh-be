@@ -1,11 +1,11 @@
 package handler
 
-import (	
+import (
 	"net/http"
 
 	"reseller-jh-be/base"
 	"reseller-jh-be/constant"
-	"reseller-jh-be/internal/homepage/model"	
+	"reseller-jh-be/internal/homepage/model"
 	"reseller-jh-be/internal/homepage/service"
 	"reseller-jh-be/pkg/common"
 
@@ -24,12 +24,12 @@ func NewHomepageHandler(service *service.HomepageService) *HomepageHandler {
 
 func (h *HomepageHandler) GetHomepage(c *gin.Context) {
 	common.Log.Info("===== HANDLER CALLED - GetHomepage =====")
-	
+
 	homepage, err := h.Service.GetHomepage()
 	if err != nil {
 		common.Log.Error("Func GetHomepage: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -42,12 +42,12 @@ func (h *HomepageHandler) GetHomepage(c *gin.Context) {
 
 func (h *HomepageHandler) UpdateHomepage(c *gin.Context) {
 	common.Log.Info("===== HANDLER CALLED - UpdateHomepage =====")
-	
+
 	var reqHomepage model.Homepage
 	if err := c.ShouldBindJSON(&reqHomepage); err != nil {
 		common.Log.Error("Func ShouldBindJSON: ", err)
 
-		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
 
@@ -55,7 +55,7 @@ func (h *HomepageHandler) UpdateHomepage(c *gin.Context) {
 	if err != nil {
 		common.Log.Error("Func UpdateHomepage: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 

@@ -5,6 +5,9 @@ import (
 	"reseller-jh-be/internal/user/handler"
 	"reseller-jh-be/internal/user/repository"
 	"reseller-jh-be/internal/user/service"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 )
 
 func RegisterRoute(app *internal.Application) {
@@ -15,6 +18,8 @@ func RegisterRoute(app *internal.Application) {
 	// Define user-related routes
 	userRoutes := app.Gin.Group("/api")
 	{
+		store := cookie.NewStore([]byte("secret"))
+		userRoutes.Use(sessions.Sessions("mysession", store))
 		userRoutes.POST("/register", userHandler.CreateUser)
 		userRoutes.POST("/login", userHandler.Login)
 	}

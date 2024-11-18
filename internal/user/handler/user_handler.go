@@ -1,10 +1,10 @@
 package handler
 
-import (	
+import (
 	"net/http"
 
 	"reseller-jh-be/base"
-	"reseller-jh-be/constant"	
+	"reseller-jh-be/constant"
 	"reseller-jh-be/internal/user/request"
 	"reseller-jh-be/internal/user/service"
 	"reseller-jh-be/pkg/common"
@@ -27,24 +27,24 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	var reqUser request.ReqLogin
 	if err := c.ShouldBindJSON(&reqUser); err != nil {
-		common.Log.Error("Func ShouldBindJSON: ", err)		
+		common.Log.Error("Func ShouldBindJSON: ", err)
 
-		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
 
-	user, err := h.Service.Login(reqUser)
+	user, err := h.Service.Login(c, reqUser)
 	if err != nil {
 		common.Log.Error("Func Login: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
 	common.Log.WithFields(map[string]interface{}{
 		"data": user,
 	}).Info("Login")
-	
+
 	base.RespondSuccess(c, constant.Success, user, nil)
 }
 
@@ -61,15 +61,15 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		// }
 		// c.JSON(http.StatusBadRequest, resp)
 
-		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
-	
+
 	user, err := h.Service.CreateUser(reqUser)
 	if err != nil {
 		common.Log.Error("Func CreateUser: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	if err != nil {
 		common.Log.Error("Func GetUser: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 

@@ -14,7 +14,7 @@ func RegisterRoute(app *internal.Application) {
 
 	// Define user-related routes
 	homepageRoutes := app.Gin.Group("/api")
-	{		
+	{
 		homepageRoutes.GET("/homepage", homepageHandler.GetHomepage)
 		homepageRoutes.PUT("/homepage", homepageHandler.UpdateHomepage)
 	}

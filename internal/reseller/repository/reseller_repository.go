@@ -5,6 +5,7 @@ import (
 	"reseller-jh-be/internal/reseller/model"
 	"reseller-jh-be/internal/reseller/request"
 	"reseller-jh-be/internal/reseller/response"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -78,29 +79,55 @@ func (r *ResellerRepository) DeleteReseller(ID int64) error {
 }
 
 func (r *ResellerRepository) CountResellers(reqReseller request.ReqReseller) (reseller response.RespResellerDashboard, err error) {
-	query := r.DB.Model(&model.Reseller{})
-
-	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
-		query = query.Where("DATE(created_at) BETWEEN ? AND ? ", reqReseller.StartDate, reqReseller.EndDate)		
-	}
-
-	if err = query.Count(&reseller.Total).Error; err != nil {	
+	reseller.Total, err = r.FilterCountResellers(reqReseller, "total")
+	if err != nil {
 		return reseller, err
 	}
 
-	if err = query.Where("status_id = 1").Count(&reseller.Unread).Error; err != nil {
+	reseller.Unread, err = r.FilterCountResellers(reqReseller, "unread")
+	if err != nil {
 		return reseller, err
 	}
 
-	if err = query.Where("status_id = 2").Count(&reseller.Read).Error; err != nil {
+	reseller.Read, err = r.FilterCountResellers(reqReseller, "read")
+	if err != nil {
 		return reseller, err
-	}	
+	}
 
 	return reseller, nil
 }
 
-func (r *ResellerRepository)ResellersChart(reqReseller request.ReqReseller) (resp response.RespResellerChart, err error) {
+func (r *ResellerRepository) FilterCountResellers(reqReseller request.ReqReseller, countType string) (result int64, err error) {
+	var reseller response.RespResellerDashboard
+	query := r.DB.Model(&model.Reseller{})
+	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
+		query = query.Where("DATE(created_at) BETWEEN ? AND ?", reqReseller.StartDate, reqReseller.EndDate)
+	}
+	if countType == "unread" {
+		if err = query.Where("status_id = 1").Count(&reseller.Unread).Error; err != nil {
+			return result, err
+		}
+		result = reseller.Unread
+	} else if countType == "read" {
+		if err = query.Where("status_id = 2").Count(&reseller.Read).Error; err != nil {
+			return result, err
+		}
+		result = reseller.Read
+	} else {
+		if err = query.Count(&reseller.Total).Error; err != nil {
+			return result, err
+		}
+		result = reseller.Total
+	}
+
+	return result, nil
+}
+
+func (r *ResellerRepository) ResellersChart(reqReseller request.ReqReseller) (resp response.RespResellerChart, err error) {
 	var results []response.ResellerChart
+	now := time.Now()
+	today := now.Format("2006-01-02 15:04:05")
+
 	query := `
 		SELECT 
 			TO_CHAR(created_at, 'DD Mon') AS date,
@@ -111,6 +138,10 @@ func (r *ResellerRepository)ResellersChart(reqReseller request.ReqReseller) (res
 		ORDER BY MIN(created_at)
 	`
 
+	if reqReseller.StartDate == "" || reqReseller.EndDate == "" {
+		reqReseller.StartDate = today
+		reqReseller.EndDate = today
+	}
 	if err = r.DB.Raw(query, reqReseller.StartDate, reqReseller.EndDate).Scan(&results).Error; err != nil {
 		return resp, err
 	}

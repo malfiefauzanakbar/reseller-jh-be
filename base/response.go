@@ -23,7 +23,7 @@ type Pagination struct {
 
 type SuccessResponse struct {
 	Success    bool        `json:"success"`
-	Status    int        `json:"status"`
+	Status     int         `json:"status"`
 	Message    string      `json:"message"`
 	Data       interface{} `json:"data,omitempty"`
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -32,7 +32,7 @@ type SuccessResponse struct {
 // ErrorResponse defines the structure of an error response
 type ErrorResponse struct {
 	Success bool        `json:"success"`
-	Status    int        `json:"status"`
+	Status  int         `json:"status"`
 	Message string      `json:"message"`
 	Error   interface{} `json:"error,omitempty"`
 }
@@ -41,7 +41,7 @@ type ErrorResponse struct {
 func RespondSuccess(c *gin.Context, message string, data interface{}, pagination *Pagination) {
 	c.JSON(http.StatusOK, SuccessResponse{
 		Success:    true,
-		Status:    http.StatusOK,
+		Status:     http.StatusOK,
 		Message:    message,
 		Data:       data,
 		Pagination: pagination,
@@ -52,7 +52,7 @@ func RespondSuccess(c *gin.Context, message string, data interface{}, pagination
 func RespondError(c *gin.Context, httpStatus int, message string, err interface{}) {
 	c.JSON(httpStatus, ErrorResponse{
 		Success: false,
-		Status:    httpStatus,
+		Status:  httpStatus,
 		Message: message,
 		Error:   err,
 	})

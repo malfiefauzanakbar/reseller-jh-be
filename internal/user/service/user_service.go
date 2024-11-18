@@ -1,14 +1,17 @@
 package service
 
-import (	
-	"strconv"
+import (
 	"errors"
-	
+	"strconv"
+
 	"reseller-jh-be/internal/user/model"
 	"reseller-jh-be/internal/user/repository"
 	"reseller-jh-be/internal/user/request"
 	"reseller-jh-be/internal/user/response"
 	"reseller-jh-be/pkg/common"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 type UserService struct {
@@ -24,7 +27,7 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 	}
 }
 
-func (s *UserService) Login(reqUser request.ReqLogin) (resp response.RespLogin, err error) {	
+func (s *UserService) Login(c *gin.Context, reqUser request.ReqLogin) (resp response.RespLogin, err error) {
 	var user model.User
 	user, err = s.Repo.GetUserByUsername(reqUser.Username)
 	if err != nil {
@@ -36,7 +39,12 @@ func (s *UserService) Login(reqUser request.ReqLogin) (resp response.RespLogin, 
 		return resp, errors.New("Password salah.")
 	}
 
-	generateToken, err := common.Encrypt(user.Username)
+	randomString := common.RandString(10)
+	session := sessions.Default(c)
+	session.Clear()
+	session.Set("token", randomString)
+	session.Save()
+	generateToken, err := common.Encrypt(randomString)
 	if err != nil {
 		return resp, err
 	}
@@ -49,7 +57,7 @@ func (s *UserService) Login(reqUser request.ReqLogin) (resp response.RespLogin, 
 	return resp, nil
 }
 
-func (s *UserService) CreateUser(reqUser request.ReqRegister) (user model.User, err error) {	
+func (s *UserService) CreateUser(reqUser request.ReqRegister) (user model.User, err error) {
 	user, _ = s.Repo.GetUserByEmail(reqUser.Email)
 	if user.Email != "" {
 		return user, errors.New("Email sudah terdaftar.")
@@ -67,9 +75,9 @@ func (s *UserService) CreateUser(reqUser request.ReqRegister) (user model.User, 
 	password, err := common.HashPassword(reqUser.Password)
 	if err != nil {
 		return user, errors.New("Hash password error.")
-	}	
+	}
 
-	reqUser.Password = password	
+	reqUser.Password = password
 	user, err = s.Repo.CreateUser(reqUser)
 	if err != nil {
 		return user, err

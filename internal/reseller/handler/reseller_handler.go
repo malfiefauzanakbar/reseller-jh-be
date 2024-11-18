@@ -1,6 +1,6 @@
 package handler
 
-import (	
+import (
 	"net/http"
 
 	"reseller-jh-be/base"
@@ -36,7 +36,7 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 		// }
 		// c.JSON(http.StatusBadRequest, resp)
 
-		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
 
@@ -44,7 +44,7 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 	if err != nil {
 		common.Log.Error("Func CreateReseller: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -67,16 +67,16 @@ func (h *ResellerHandler) GetAllReseller(c *gin.Context) {
 	if err := c.ShouldBindQuery(&reqReseller); err != nil {
 		common.Log.Error("Func ShouldBindQuery: ", err)
 
-		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
-	
+
 	reqPagination := common.HandleReqPagination(c)
 	resellers, pagination, err := h.Service.GetAllReseller(reqReseller, reqPagination)
 	if err != nil {
 		common.Log.Error("Func GetAllReseller: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -95,7 +95,7 @@ func (h *ResellerHandler) GetReseller(c *gin.Context) {
 	if err != nil {
 		common.Log.Error("Func GetReseller: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -114,7 +114,7 @@ func (h *ResellerHandler) UpdateReseller(c *gin.Context) {
 	if err := c.ShouldBindJSON(&reqReseller); err != nil {
 		common.Log.Error("Func ShouldBindJSON: ", err)
 
-		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
 
@@ -122,7 +122,7 @@ func (h *ResellerHandler) UpdateReseller(c *gin.Context) {
 	if err != nil {
 		common.Log.Error("Func UpdateReseller: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -142,7 +142,7 @@ func (h *ResellerHandler) ReadReseller(c *gin.Context) {
 	if err != nil {
 		common.Log.Error("Func ReadReseller: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -160,7 +160,7 @@ func (h *ResellerHandler) DeleteReseller(c *gin.Context) {
 	if err := h.Service.DeleteReseller(id); err != nil {
 		common.Log.Error("Func UpdateReseller: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -169,19 +169,19 @@ func (h *ResellerHandler) DeleteReseller(c *gin.Context) {
 
 func (h *ResellerHandler) CountResellers(c *gin.Context) {
 	common.Log.Info("===== HANDLER CALLED - CountResellers =====")
-	
+
 	var reqReseller request.ReqReseller
 	if err := c.ShouldBindQuery(&reqReseller); err != nil {
 		common.Log.Error("Func ShouldBindQuery: ", err)
 
-		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
 	reseller, err := h.Service.CountResellers(reqReseller)
 	if err != nil {
 		common.Log.Error("Func CountResellers: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
@@ -194,19 +194,19 @@ func (h *ResellerHandler) CountResellers(c *gin.Context) {
 
 func (h *ResellerHandler) ResellersChart(c *gin.Context) {
 	common.Log.Info("===== HANDLER CALLED - ResellersChart =====")
-	
+
 	var reqReseller request.ReqReseller
 	if err := c.ShouldBindQuery(&reqReseller); err != nil {
 		common.Log.Error("Func ShouldBindQuery: ", err)
 
-		base.RespondError(c, http.StatusBadRequest, constant.Error, err.Error())
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
 	resp, err := h.Service.ResellersChart(reqReseller)
 	if err != nil {
 		common.Log.Error("Func ResellersChart: ", err)
 
-		base.RespondError(c, http.StatusInternalServerError, constant.Error, err.Error())
+		base.RespondError(c, http.StatusInternalServerError, constant.InternalServerError, err.Error())
 		return
 	}
 
