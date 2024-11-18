@@ -3,7 +3,3 @@ tmp/*
 
 # User-specific files
 .env
-
-# Go Modules
-/go.sum
-/go.mod
