@@ -63,7 +63,7 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 	// 	Data:   reseller,
 	// }
 	// c.JSON(http.StatusCreated, resp)
-	base.RespondSuccess(c, constant.Success, reseller, nil)
+	base.RespondSuccess(c, reseller, nil)
 }
 
 func (h *ResellerHandler) GetAllReseller(c *gin.Context) {
@@ -90,7 +90,7 @@ func (h *ResellerHandler) GetAllReseller(c *gin.Context) {
 		"data": resellers,
 	}).Info("GetAllReseller")
 
-	base.RespondSuccess(c, constant.Success, resellers, &pagination)
+	base.RespondSuccess(c, resellers, &pagination)
 }
 
 func (h *ResellerHandler) GetReseller(c *gin.Context) {
@@ -109,7 +109,7 @@ func (h *ResellerHandler) GetReseller(c *gin.Context) {
 		"data": reseller,
 	}).Info("GetReseller")
 
-	base.RespondSuccess(c, constant.Success, reseller, nil)
+	base.RespondSuccess(c, reseller, nil)
 }
 
 func (h *ResellerHandler) UpdateReseller(c *gin.Context) {
@@ -136,7 +136,7 @@ func (h *ResellerHandler) UpdateReseller(c *gin.Context) {
 		"data": reseller,
 	}).Info("UpdateReseller")
 
-	base.RespondSuccess(c, constant.Success, reseller, nil)
+	base.RespondSuccess(c, reseller, nil)
 }
 
 func (h *ResellerHandler) ReadReseller(c *gin.Context) {
@@ -156,7 +156,7 @@ func (h *ResellerHandler) ReadReseller(c *gin.Context) {
 		"data": reseller,
 	}).Info("ReadReseller")
 
-	base.RespondSuccess(c, constant.Success, reseller, nil)
+	base.RespondSuccess(c, reseller, nil)
 }
 
 func (h *ResellerHandler) DeleteReseller(c *gin.Context) {
@@ -170,7 +170,7 @@ func (h *ResellerHandler) DeleteReseller(c *gin.Context) {
 		return
 	}
 
-	base.RespondSuccess(c, constant.Success, nil, nil)
+	base.RespondSuccess(c, nil, nil)
 }
 
 func (h *ResellerHandler) CountResellers(c *gin.Context) {
@@ -195,7 +195,7 @@ func (h *ResellerHandler) CountResellers(c *gin.Context) {
 		"data": reseller,
 	}).Info("ReadReseller")
 
-	base.RespondSuccess(c, constant.Success, reseller, nil)
+	base.RespondSuccess(c, reseller, nil)
 }
 
 func (h *ResellerHandler) ResellersChart(c *gin.Context) {
@@ -220,7 +220,7 @@ func (h *ResellerHandler) ResellersChart(c *gin.Context) {
 		"data": resp,
 	}).Info("ReadReseller")
 
-	base.RespondSuccess(c, constant.Success, resp, nil)
+	base.RespondSuccess(c, resp, nil)
 }
 
 func (h *ResellerHandler) ExportExcelResellers(c *gin.Context) {
@@ -246,5 +246,5 @@ func (h *ResellerHandler) ExportExcelResellers(c *gin.Context) {
 		"data": resp,
 	}).Info("ExportExcelResellers")
 
-	base.RespondSuccess(c, constant.Success, resp, nil)
+	base.RespondSuccess(c, resp, nil)
 }

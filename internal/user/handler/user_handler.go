@@ -45,7 +45,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		"data": user,
 	}).Info("Login")
 
-	base.RespondSuccess(c, constant.Success, user, nil)
+	base.RespondSuccess(c, user, nil)
 }
 
 func (h *UserHandler) CreateUser(c *gin.Context) {
@@ -82,7 +82,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	// 	Data:   user,
 	// }
 	// c.JSON(http.StatusCreated, resp)
-	base.RespondSuccess(c, constant.Success, user, nil)
+	base.RespondSuccess(c, user, nil)
 }
 
 func (h *UserHandler) GetUser(c *gin.Context) {
@@ -101,5 +101,5 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		"data": user,
 	}).Info("GetUser")
 
-	base.RespondSuccess(c, constant.Success, user, nil)
+	base.RespondSuccess(c, user, nil)
 }

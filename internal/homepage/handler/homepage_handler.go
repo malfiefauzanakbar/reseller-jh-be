@@ -37,7 +37,7 @@ func (h *HomepageHandler) GetHomepage(c *gin.Context) {
 		"data": homepage,
 	}).Info("GetHomepage")
 
-	base.RespondSuccess(c, constant.Success, homepage, nil)
+	base.RespondSuccess(c, homepage, nil)
 }
 
 func (h *HomepageHandler) UpdateHomepage(c *gin.Context) {
@@ -69,5 +69,5 @@ func (h *HomepageHandler) UpdateHomepage(c *gin.Context) {
 		"data": homepage,
 	}).Info("UpdateHomepage")
 
-	base.RespondSuccess(c, constant.Success, homepage, nil)
+	base.RespondSuccess(c, homepage, nil)
 }

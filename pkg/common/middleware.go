@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"reseller-jh-be/base"
 	"reseller-jh-be/constant"
-	"strings"
+	// "strings"
 	"time"
 
 	"github.com/gin-contrib/sessions"
@@ -14,16 +14,16 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authorization := c.GetHeader("Authorization")
-		parts := strings.Split(authorization, " ")
+		token := c.GetHeader("token")
+		// parts := strings.Split(authorization, " ")
 
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			base.RespondError(c, http.StatusUnauthorized, constant.Unauthorized, nil)
-			c.Abort()
-			return
-		}
+		// if len(parts) != 2 || parts[0] != "Bearer" {
+		// 	base.RespondError(c, http.StatusUnauthorized, constant.Unauthorized, nil)
+		// 	c.Abort()
+		// 	return
+		// }
 
-		token := parts[1]
+		// token := parts[1]
 		decryptToken, err := Decrypt(token)
 		if err != nil {
 			base.RespondError(c, http.StatusUnauthorized, constant.Unauthorized, err)
