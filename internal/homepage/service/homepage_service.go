@@ -1,6 +1,6 @@
 package service
 
-import (
+import (	
 	"mime/multipart"
 	"reseller-jh-be/internal/homepage/model"
 	"reseller-jh-be/internal/homepage/repository"
@@ -36,16 +36,16 @@ func (s *HomepageService) UpdateHomepage(c *gin.Context, reqHomepage *request.Re
 	filePath, err := common.UploadFile(c, file, "bannerImage")
 	if err != nil {
 		return nil, err
+	}	
+
+	homepage, err = s.Repo.GetHomepage()
+	if err != nil {
+		return nil, err
 	}
 
-	if filePath == "" {
-		homepage, err = s.Repo.GetHomepage()
-		if err != nil {
-			return nil, err
-		}
-
+	if filePath == "" {		
 		filePath = homepage.BannerImage
-	}
+	}	
 
 	homepage.BannerTitle = reqHomepage.BannerTitle
 	homepage.BannerImage = filePath
@@ -60,7 +60,7 @@ func (s *HomepageService) UpdateHomepage(c *gin.Context, reqHomepage *request.Re
 	homepage.FacilityDescription = reqHomepage.FacilityDescription
 	homepage.VideoTitle = reqHomepage.VideoTitle
 	homepage.VideoDescription = reqHomepage.VideoDescription
-	homepage.VideoLink = reqHomepage.VideoLink
+	homepage.VideoLink = reqHomepage.VideoLink	
 	err = s.Repo.UpdateHomepage(homepage)
 	if err != nil {
 		return nil, err

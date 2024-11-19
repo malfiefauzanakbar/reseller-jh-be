@@ -23,10 +23,10 @@ func NewResellerRepository(DB *gorm.DB) *ResellerRepository {
 	}
 }
 
-func (r *ResellerRepository) CreateReseller(reqReseller *model.Reseller) (*model.Reseller, error) {
-	err := r.DB.Create(reqReseller).Error
+func (r *ResellerRepository) CreateReseller(reqReseller model.Reseller) (model.Reseller, error) {
+	err := r.DB.Create(&reqReseller).Error
 	if err != nil {
-		return nil, err
+		return reqReseller, err
 	}
 
 	return reqReseller, nil

@@ -26,9 +26,9 @@ func NewResellerHandler(service *service.ResellerService) *ResellerHandler {
 func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 	common.Log.Info("===== HANDLER CALLED - CreateReseller =====")
 
-	var reqReseller model.Reseller
+	var reqReseller request.ReqCreateReseller
 	if err := c.ShouldBind(&reqReseller); err != nil {
-		common.Log.Error("Func ShouldBindJSON: ", err)
+		common.Log.Error("Func ShouldBind: ", err)
 
 		// resp := base.BaseResp{
 		// 	Status:  constant.Error,
@@ -46,7 +46,7 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 		return
 	}
 
-	reseller, err := h.Service.CreateReseller(c, &reqReseller, file)
+	reseller, err := h.Service.CreateReseller(c, reqReseller, file)
 	if err != nil {
 		common.Log.Error("Func CreateReseller: ", err)
 

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"reseller-jh-be/base"
@@ -50,12 +51,14 @@ func (h *HomepageHandler) UpdateHomepage(c *gin.Context) {
 		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
+	fmt.Println("reqHomepage", &reqHomepage)
 
 	file, err := c.FormFile("banner_image")
 	if err != nil {
 		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
+	fmt.Println("reqHomepage file", file.Filename)
 
 	homepage, err := h.Service.UpdateHomepage(c, &reqHomepage, file)
 	if err != nil {
