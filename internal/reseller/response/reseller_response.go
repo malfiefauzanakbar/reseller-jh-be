@@ -14,13 +14,14 @@ type RespReseller struct {
 	Address      string    `json:"address" gorm:"type:text;null"`
 	StatusID     int64     `json:"status_id" gorm:"not null"`
 	StatusName   string    `json:"status_name" gorm:"size:50;not null"`
+	KTP          string    `json:"ktp" gorm:"size:255;not null"`
 	CreatedAt    time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
 
-type RespResellerDashboard struct {	
-	Total     int64     `json:"total" gorm:"not null"`
-	Unread     int64     `json:"unread" gorm:"not null"`
-	Read     int64     `json:"read" gorm:"not null"`
+type RespResellerDashboard struct {
+	Total  int64 `json:"total" gorm:"not null"`
+	Unread int64 `json:"unread" gorm:"not null"`
+	Read   int64 `json:"read" gorm:"not null"`
 }
 
 type ResellerChart struct {
@@ -29,10 +30,10 @@ type ResellerChart struct {
 }
 
 type RespResellerChart struct {
-	Categories  []string `json:"categories"`
-	Data []int `json:"data"`
+	Categories []string `json:"categories"`
+	Data       []int    `json:"data"`
 }
 
 type RespExportReseller struct {
-	Filename  string	`json:"filename"`
+	Filename string `json:"filename"`
 }

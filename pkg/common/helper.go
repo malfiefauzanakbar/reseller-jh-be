@@ -7,8 +7,10 @@ import (
 	"encoding/base64"
 	"errors"
 	"io"
-	math "math/rand"
+	mathrand "math/rand"
+	"mime/multipart"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -117,10 +119,33 @@ func Decrypt(cipherText string) (string, error) {
 
 func RandString(n int) string {
 	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	math.Seed(time.Now().UnixNano())
+	mathrand.Seed(time.Now().UnixNano())
 	b := make([]byte, n)
 	for i := range b {
-		b[i] = letterBytes[math.Intn(len(letterBytes))]
+		b[i] = letterBytes[mathrand.Intn(len(letterBytes))]
 	}
 	return string(b)
+}
+
+func UploadFile(c *gin.Context, file *multipart.FileHeader, fileName string) (resp string, err error) {
+	if file != nil {
+		if _, err := os.Stat("./uploads"); os.IsNotExist(err) {
+			os.Mkdir("./uploads", os.ModePerm)
+		}
+
+		if fileName == "" {
+			fileName = RandString(10)
+		}
+		destination := "./uploads/"
+		ext := filepath.Ext(file.Filename)
+		filePath := filepath.Join(destination, fileName+ext)
+
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			return resp, err
+		}
+
+		resp = os.Getenv("DIR_FILE") + filePath
+	}
+
+	return resp, nil
 }

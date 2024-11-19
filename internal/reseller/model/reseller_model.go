@@ -15,6 +15,7 @@ type Reseller struct {
 	NIK          string         `json:"nik" gorm:"not null"`
 	Address      string         `json:"address" gorm:"type:text;null"`
 	StatusID     int64          `json:"status_id" gorm:"not null"`
+	KTP          string         `json:"ktp" gorm:"size:255;not null"`
 	CreatedAt    time.Time      `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt    time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
 	DeletedAt    gorm.DeletedAt `json:"deleted_at" gorm:"index"`

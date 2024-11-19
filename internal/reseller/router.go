@@ -1,12 +1,11 @@
 package reseller
 
-import (	
+import (
 	"reseller-jh-be/internal"
 	"reseller-jh-be/internal/reseller/handler"
 	"reseller-jh-be/internal/reseller/repository"
 	"reseller-jh-be/internal/reseller/service"
 	"reseller-jh-be/pkg/common"
-	
 )
 
 func RegisterRoute(app *internal.Application) {
@@ -17,10 +16,8 @@ func RegisterRoute(app *internal.Application) {
 	route := app.Gin.Group("/api")
 	{
 		route.POST("/reseller", resellerHandler.CreateReseller)
-		route.GET("/count-reseller", resellerHandler.CountResellers)
-		route.GET("/reseller-chart", resellerHandler.ResellersChart)
 
-		resellerRoutes := route.Group("/reseller")		
+		resellerRoutes := route.Group("/reseller")
 		resellerRoutes.Use(common.AuthMiddleware())
 		{
 			resellerRoutes.GET("", resellerHandler.GetAllReseller)
@@ -29,6 +26,8 @@ func RegisterRoute(app *internal.Application) {
 			resellerRoutes.PUT("/read/:id", resellerHandler.ReadReseller)
 			resellerRoutes.DELETE("/:id", resellerHandler.DeleteReseller)
 			resellerRoutes.GET("/export/excel", resellerHandler.ExportExcelResellers)
+			resellerRoutes.GET("/dashboard/count", resellerHandler.CountResellers)
+			resellerRoutes.GET("/dashboard/chart", resellerHandler.ResellersChart)
 		}
 	}
 }

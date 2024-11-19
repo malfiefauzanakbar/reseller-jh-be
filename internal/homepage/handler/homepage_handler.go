@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"reseller-jh-be/base"
-	"reseller-jh-be/constant"	
+	"reseller-jh-be/constant"
 	"reseller-jh-be/internal/homepage/request"
 	"reseller-jh-be/internal/homepage/service"
 	"reseller-jh-be/pkg/common"
@@ -55,7 +55,7 @@ func (h *HomepageHandler) UpdateHomepage(c *gin.Context) {
 	if err != nil {
 		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
-	}	
+	}
 
 	homepage, err := h.Service.UpdateHomepage(c, &reqHomepage, file)
 	if err != nil {

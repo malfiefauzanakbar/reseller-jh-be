@@ -1,12 +1,11 @@
 package service
 
 import (
-	"os"	
-	"path/filepath"
 	"mime/multipart"
 	"reseller-jh-be/internal/homepage/model"
 	"reseller-jh-be/internal/homepage/repository"
 	"reseller-jh-be/internal/homepage/request"
+	"reseller-jh-be/pkg/common"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,33 +32,23 @@ func (s *HomepageService) GetHomepage() (homepage *model.Homepage, err error) {
 	return homepage, nil
 }
 
-func (s *HomepageService) UpdateHomepage(c *gin.Context, reqHomepage *request.ReqHomepage, file *multipart.FileHeader) (homepage *model.Homepage, err error) {		
-	var filename string
-	if file != nil {
-		if _, err := os.Stat("./uploads"); os.IsNotExist(err) {
-			os.Mkdir("./uploads", os.ModePerm)
-		}
-
-		destination := "./uploads/"
-		ext := filepath.Ext(file.Filename)
-		filename = filepath.Join(destination, "bannerImage"+ext)
-
-		if err := c.SaveUploadedFile(file, filename); err != nil {
-			return nil, err		
-		}		
-	}	
-
-	homepage, err = s.Repo.GetHomepage()
+func (s *HomepageService) UpdateHomepage(c *gin.Context, reqHomepage *request.ReqHomepage, file *multipart.FileHeader) (homepage *model.Homepage, err error) {
+	filePath, err := common.UploadFile(c, file, "bannerImage")
 	if err != nil {
 		return nil, err
 	}
 
-	if filename == "" {
-		filename = homepage.BannerImage
+	if filePath == "" {
+		homepage, err = s.Repo.GetHomepage()
+		if err != nil {
+			return nil, err
+		}
+
+		filePath = homepage.BannerImage
 	}
 
 	homepage.BannerTitle = reqHomepage.BannerTitle
-	homepage.BannerImage = os.Getenv("DIR_FILE")+filename
+	homepage.BannerImage = filePath
 	homepage.ShortDescription = reqHomepage.ShortDescription
 	homepage.JourneyTitle = reqHomepage.JourneyTitle
 	homepage.JourneyDescription = reqHomepage.JourneyDescription

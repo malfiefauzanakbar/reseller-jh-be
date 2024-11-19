@@ -1,10 +1,11 @@
 package service
 
 import (
+	"mime/multipart"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
-	"path/filepath"
 
 	"reseller-jh-be/base"
 	"reseller-jh-be/internal/reseller/model"
@@ -13,6 +14,7 @@ import (
 	"reseller-jh-be/internal/reseller/response"
 	"reseller-jh-be/pkg/common"
 
+	"github.com/gin-gonic/gin"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -29,8 +31,14 @@ func NewResellerService(repo *repository.ResellerRepository) *ResellerService {
 	}
 }
 
-func (s *ResellerService) CreateReseller(reqReseller *model.Reseller) (reseller *model.Reseller, err error) {
+func (s *ResellerService) CreateReseller(c *gin.Context, reqReseller *model.Reseller, file *multipart.FileHeader) (reseller *model.Reseller, err error) {
+	filePath, err := common.UploadFile(c, file, "")
+	if err != nil {
+		return nil, err
+	}
+
 	reqReseller.StatusID = 1
+	reqReseller.KTP = filePath
 	reseller, err = s.Repo.CreateReseller(reqReseller)
 	if err != nil {
 		return nil, err
@@ -154,20 +162,20 @@ func (s *ResellerService) ExportExcelResellers(reqReseller request.ReqReseller) 
 	if err != nil {
 		return resp, err
 	}
-	localLocation := time.Now().Location()	
+	localLocation := time.Now().Location()
 	parseStartDate, err := time.ParseInLocation("2006-01-02", reqReseller.StartDate, localLocation)
-	if err != nil {				
-		return resp, err		
+	if err != nil {
+		return resp, err
 	}
 	startDate := parseStartDate.Format("02 Jan 2006")
 	parseEndDate, err := time.ParseInLocation("2006-01-02", reqReseller.EndDate, localLocation)
-	if err != nil {				
-		return resp, err		
+	if err != nil {
+		return resp, err
 	}
 	endDate := parseEndDate.Format("02 Jan 2006")
 	f := excelize.NewFile()
-	
-	sheetName := "Sheet1"	
+
+	sheetName := "Sheet1"
 	f.NewSheet(sheetName)
 	f.SetCellValue(sheetName, "A1", "Periode")
 	f.SetCellValue(sheetName, "B1", startDate+" - "+endDate)
@@ -176,7 +184,7 @@ func (s *ResellerService) ExportExcelResellers(reqReseller request.ReqReseller) 
 	f.SetCellValue(sheetName, "B3", "Whatsapp")
 	f.SetCellValue(sheetName, "C3", "NIK")
 	f.SetCellValue(sheetName, "D3", "Alamat")
-	f.SetCellValue(sheetName, "E3", "Status")	
+	f.SetCellValue(sheetName, "E3", "Status")
 	f.SetCellValue(sheetName, "F3", "Email")
 	f.SetCellValue(sheetName, "G3", "Tanggal Daftar")
 
@@ -191,19 +199,19 @@ func (s *ResellerService) ExportExcelResellers(reqReseller request.ReqReseller) 
 		f.SetCellValue(sheetName, "F"+strconv.Itoa(row), reseller.Email)
 		f.SetCellValue(sheetName, "G"+strconv.Itoa(row), formattedCreatedAt)
 	}
-		
+
 	if _, err := os.Stat("./uploads"); os.IsNotExist(err) {
 		os.Mkdir("./uploads", os.ModePerm)
 	}
 
 	folderPath := "./uploads/"
 	fileName := "reseller.xlsx"
-    filePath := filepath.Join(folderPath, fileName)
-	if err := f.SaveAs(filePath); err != nil {		
+	filePath := filepath.Join(folderPath, fileName)
+	if err := f.SaveAs(filePath); err != nil {
 		return resp, err
-	}	
+	}
 
-	resp.Filename = os.Getenv("DIR_FILE")+"uploads/"+fileName	
+	resp.Filename = os.Getenv("DIR_FILE") + "uploads/" + fileName
 
 	return resp, nil
 }

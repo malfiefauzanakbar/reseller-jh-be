@@ -27,7 +27,7 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 	common.Log.Info("===== HANDLER CALLED - CreateReseller =====")
 
 	var reqReseller model.Reseller
-	if err := c.ShouldBindJSON(&reqReseller); err != nil {
+	if err := c.ShouldBind(&reqReseller); err != nil {
 		common.Log.Error("Func ShouldBindJSON: ", err)
 
 		// resp := base.BaseResp{
@@ -40,7 +40,13 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 		return
 	}
 
-	reseller, err := h.Service.CreateReseller(&reqReseller)
+	file, err := c.FormFile("ktp")
+	if err != nil {
+		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
+		return
+	}
+
+	reseller, err := h.Service.CreateReseller(c, &reqReseller, file)
 	if err != nil {
 		common.Log.Error("Func CreateReseller: ", err)
 
@@ -227,7 +233,7 @@ func (h *ResellerHandler) ExportExcelResellers(c *gin.Context) {
 		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
-	
+
 	resp, err := h.Service.ExportExcelResellers(reqReseller)
 	if err != nil {
 		common.Log.Error("Func ExportExcelResellers: ", err)
@@ -240,5 +246,5 @@ func (h *ResellerHandler) ExportExcelResellers(c *gin.Context) {
 		"data": resp,
 	}).Info("ExportExcelResellers")
 
-	base.RespondSuccess(c, constant.Success, resp, nil)	
+	base.RespondSuccess(c, constant.Success, resp, nil)
 }
