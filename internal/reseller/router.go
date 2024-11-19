@@ -13,21 +13,17 @@ func RegisterRoute(app *internal.Application) {
 	resellerService := service.NewResellerService(resellerRepo)
 	resellerHandler := handler.NewResellerHandler(resellerService)
 
+	app.Gin.POST("/api/reseller", resellerHandler.CreateReseller)
 	route := app.Gin.Group("/api")
-	{
-		route.POST("/reseller", resellerHandler.CreateReseller)
-
-		resellerRoutes := route.Group("/reseller")
-		resellerRoutes.Use(common.AuthMiddleware())
-		{
-			resellerRoutes.GET("", resellerHandler.GetAllReseller)
-			resellerRoutes.GET("/:id", resellerHandler.GetReseller)
-			resellerRoutes.PUT("/:id", resellerHandler.UpdateReseller)
-			resellerRoutes.PUT("/read/:id", resellerHandler.ReadReseller)
-			resellerRoutes.DELETE("/:id", resellerHandler.DeleteReseller)
-			resellerRoutes.GET("/export/excel", resellerHandler.ExportExcelResellers)
-			resellerRoutes.GET("/dashboard/count", resellerHandler.CountResellers)
-			resellerRoutes.GET("/dashboard/chart", resellerHandler.ResellersChart)
-		}
+	route.Use(common.AuthMiddleware())
+	{						
+		route.GET("/reseller", resellerHandler.GetAllReseller)
+		route.GET("/reseller/:id", resellerHandler.GetReseller)
+		route.PUT("/reseller/:id", resellerHandler.UpdateReseller)
+		route.PUT("/reseller/read/:id", resellerHandler.ReadReseller)
+		route.DELETE("/reseller/:id", resellerHandler.DeleteReseller)
+		route.GET("/reseller/export/excel", resellerHandler.ExportExcelResellers)
+		route.GET("/reseller/dashboard/count", resellerHandler.CountResellers)
+		route.GET("/reseller/dashboard/chart", resellerHandler.ResellersChart)		
 	}
 }
