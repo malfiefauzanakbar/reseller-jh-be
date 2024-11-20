@@ -55,7 +55,12 @@ func (s *ResellerService) CreateReseller(c *gin.Context, reqReseller request.Req
 
 func (s *ResellerService) GetAllReseller(reqReseller request.ReqReseller, reqPagination base.ReqPagination) (resellers []response.RespReseller, pagination base.Pagination, err error) {
 	statusID, _ := strconv.ParseInt(reqReseller.Type, 10, 64)
-	resellers, count, err := s.Repo.GetAllReseller(statusID, reqReseller, reqPagination)
+	resellers, err = s.Repo.GetAllReseller(statusID, reqReseller, reqPagination)
+	if err != nil {
+		return nil, pagination, err
+	}
+
+	count, err := s.Repo.CountAllReseller(statusID, reqReseller, reqPagination)
 	if err != nil {
 		return nil, pagination, err
 	}

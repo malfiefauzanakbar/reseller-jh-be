@@ -32,7 +32,7 @@ func (r *ResellerRepository) CreateReseller(reqReseller model.Reseller) (model.R
 	return reqReseller, nil
 }
 
-func (r *ResellerRepository) GetAllReseller(statusID int64, reqReseller request.ReqReseller, reqPagination base.ReqPagination) (resellers []response.RespReseller, count int64, err error) {
+func (r *ResellerRepository) GetAllReseller(statusID int64, reqReseller request.ReqReseller, reqPagination base.ReqPagination) (resellers []response.RespReseller, err error) {
 	query := r.DB.Table("resellers AS r").Select("r.*, s.name AS status_name").
 		Joins("inner join public.status s on r.status_id = s.id").
 		Order("r.created_at desc").Limit(reqPagination.PageSize).Offset((reqPagination.Page - 1) * reqPagination.PageSize)
@@ -51,15 +51,35 @@ func (r *ResellerRepository) GetAllReseller(statusID int64, reqReseller request.
 
 	err = query.Find(&resellers).Error
 	if err != nil {
-		return resellers, count, err
+		return resellers, err
+	}	
+
+	return resellers, nil
+}
+
+func (r *ResellerRepository) CountAllReseller(statusID int64, reqReseller request.ReqReseller, reqPagination base.ReqPagination) (count int64, err error) {
+	query := r.DB.Table("resellers AS r").Select("r.*, s.name AS status_name").
+		Joins("inner join public.status s on r.status_id = s.id").
+		Order("r.created_at desc").Limit(reqPagination.PageSize)
+
+	if reqPagination.Keyword != "" {
+		query = query.Where("(lower(r.fullname) like ? OR lower(r.whatsapp_no) like ? OR lower(r.email) like ? OR r.nik like ? OR lower(r.address) like ?)", "%"+reqPagination.Keyword+"%", "%"+reqPagination.Keyword+"%", "%"+reqPagination.Keyword+"%", "%"+reqPagination.Keyword+"%", "%"+reqPagination.Keyword+"%")
 	}
+
+	if statusID > 0 {
+		query = query.Where("r.status_id = ? ", statusID)
+	}
+
+	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
+		query = query.Where("DATE(r.created_at) BETWEEN ? AND ? ", reqReseller.StartDate, reqReseller.EndDate)
+	}	
 
 	err = query.Count(&count).Error
 	if err != nil {
-		return resellers, count, err
+		return count, err
 	}
 
-	return resellers, count, nil
+	return count, nil
 }
 
 func (r *ResellerRepository) GetReseller(ID int64) (*model.Reseller, error) {
