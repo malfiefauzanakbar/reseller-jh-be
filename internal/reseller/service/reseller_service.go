@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"mime/multipart"
 	"os"
 	"path/filepath"
@@ -32,22 +31,20 @@ func NewResellerService(repo *repository.ResellerRepository) *ResellerService {
 	}
 }
 
-func (s *ResellerService) CreateReseller(c *gin.Context, reqReseller request.ReqCreateReseller, file *multipart.FileHeader) (reseller model.Reseller, err error) {	
+func (s *ResellerService) CreateReseller(c *gin.Context, reqReseller request.ReqCreateReseller, file *multipart.FileHeader) (reseller model.Reseller, err error) {
 	filePath, err := common.UploadFile(c, file, "")
 	if err != nil {
 		return reseller, err
-	}	
+	}
 
-	reseller.Fullname 	  = reqReseller.Fullname
-	reseller.WhatsappNo   = reqReseller.WhatsappNo
+	reseller.Fullname = reqReseller.Fullname
+	reseller.WhatsappNo = reqReseller.WhatsappNo
 	reseller.WhatsappLink = reqReseller.WhatsappLink
-	reseller.Email        = reqReseller.Email
-	reseller.NIK          = reqReseller.NIK
-	reseller.Address      = reqReseller.Address
-	reseller.StatusID 	  = 1
+	reseller.Email = reqReseller.Email
+	reseller.NIK = reqReseller.NIK
+	reseller.Address = reqReseller.Address
+	reseller.StatusID = 1
 	reseller.KTP = filePath
-	fmt.Println("NYAMPE SINI GA", reqReseller.Fullname)
-	fmt.Println("NYAMPE SINI GA", filePath)
 	reseller, err = s.Repo.CreateReseller(reseller)
 	if err != nil {
 		return reseller, err
