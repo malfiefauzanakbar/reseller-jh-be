@@ -45,6 +45,8 @@ func (s *ResellerService) CreateReseller(c *gin.Context, reqReseller request.Req
 	reseller.Address = reqReseller.Address
 	reseller.StatusID = 1
 	reseller.KTP = filePath
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+	reseller.CreatedAt = time.Now().In(loc)
 	reseller, err = s.Repo.CreateReseller(reseller)
 	if err != nil {
 		return reseller, err
