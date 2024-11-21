@@ -42,9 +42,11 @@ func (r *ResellerRepository) GetAllReseller(statusID int64, reqReseller request.
 	}
 
 	if statusID == 1 {
-		query = query.Where("r.status_id = ? ", statusID)
-	}else{
+		query = query.Where("r.status_id = 1 ")
+	}else if statusID >= 2 {
 		query = query.Where("r.status_id >= 2 ")
+	}else{
+		query = query.Where("r.status_id >= 1 ")
 	}
 
 	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
@@ -69,9 +71,11 @@ func (r *ResellerRepository) CountAllReseller(statusID int64, reqReseller reques
 	}
 
 	if statusID == 1 {
-		query = query.Where("r.status_id = ? ", statusID)
-	}else{
+		query = query.Where("r.status_id = 1 ")
+	}else if statusID >= 2 {
 		query = query.Where("r.status_id >= 2 ")
+	}else{
+		query = query.Where("r.status_id >= 1 ")
 	}
 
 	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
@@ -190,9 +194,11 @@ func (r *ResellerRepository)ExportExcelResellers(statusID int64, reqReseller req
 		Order("r.created_at desc")	
 
 	if statusID == 1 {
-		query = query.Where("r.status_id = ? ", statusID)
-	}else{
+		query = query.Where("r.status_id = 1 ")
+	}else if statusID >= 2 {
 		query = query.Where("r.status_id >= 2 ")
+	}else{
+		query = query.Where("r.status_id >= 1 ")
 	}
 
 	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
