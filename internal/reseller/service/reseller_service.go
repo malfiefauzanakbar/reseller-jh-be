@@ -118,7 +118,7 @@ func (s *ResellerService) ReadReseller(id string) (reseller *model.Reseller, err
 		return nil, err
 	}
 
-	reseller.StatusID = 2
+	reseller.StatusID = 3
 	err = s.Repo.UpdateReseller(reseller)
 	if err != nil {
 		return nil, err
