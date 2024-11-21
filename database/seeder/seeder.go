@@ -38,12 +38,12 @@ func SeedUser(db *gorm.DB) error {
 
 func SeedStatus(db *gorm.DB) error {
 	dataStatuss := []status.Status{
-		{Name: "Unread"},
-		{Name: "Read"},
-		{Name: "Process"},
-		{Name: "Discuss"},
-		{Name: "Cancel"},
-		{Name: "Deal"},
+		{Name: "Belum dibaca"},
+		{Name: "Dibaca"},
+		{Name: "Proses"},
+		{Name: "Diskusi"},
+		{Name: "Batal"},
+		{Name: "Sepakat"},
 	}
 
 	var existingStatus status.Status
