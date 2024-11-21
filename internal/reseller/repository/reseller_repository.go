@@ -68,8 +68,10 @@ func (r *ResellerRepository) CountAllReseller(statusID int64, reqReseller reques
 		query = query.Where("(lower(r.fullname) like ? OR lower(r.whatsapp_no) like ? OR lower(r.email) like ? OR r.nik like ? OR lower(r.address) like ?)", "%"+reqPagination.Keyword+"%", "%"+reqPagination.Keyword+"%", "%"+reqPagination.Keyword+"%", "%"+reqPagination.Keyword+"%", "%"+reqPagination.Keyword+"%")
 	}
 
-	if statusID > 0 {
+	if statusID == 1 {
 		query = query.Where("r.status_id = ? ", statusID)
+	}else{
+		query = query.Where("r.status_id >= 2 ")
 	}
 
 	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
