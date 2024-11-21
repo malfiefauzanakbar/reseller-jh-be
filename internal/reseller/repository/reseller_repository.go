@@ -189,8 +189,10 @@ func (r *ResellerRepository)ExportExcelResellers(statusID int64, reqReseller req
 		Joins("inner join public.status s on r.status_id = s.id").
 		Order("r.created_at desc")	
 
-	if statusID > 0 {
+	if statusID == 1 {
 		query = query.Where("r.status_id = ? ", statusID)
+	}else{
+		query = query.Where("r.status_id >= 2 ")
 	}
 
 	if reqReseller.StartDate != "" && reqReseller.EndDate != "" {
