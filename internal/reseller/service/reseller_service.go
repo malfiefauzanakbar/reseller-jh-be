@@ -32,12 +32,13 @@ func NewResellerService(repo *repository.ResellerRepository) *ResellerService {
 }
 
 func (s *ResellerService) CreateReseller(c *gin.Context, reqReseller request.ReqCreateReseller, file *multipart.FileHeader) (reseller model.Reseller, err error) {
+	var filePath string
 	if file != nil {
-		filePath, err := common.UploadFile(c, file, "")
+		filePath, err = common.UploadFile(c, file, "")
 		if err != nil {
 			return reseller, err
 		}
-	}	
+	}
 
 	reseller.Fullname = reqReseller.Fullname
 	reseller.WhatsappNo = reqReseller.WhatsappNo
@@ -46,9 +47,7 @@ func (s *ResellerService) CreateReseller(c *gin.Context, reqReseller request.Req
 	reseller.NIK = reqReseller.NIK
 	reseller.Address = reqReseller.Address
 	reseller.StatusID = 1
-	reseller.KTP = filePath
-	loc, _ := time.LoadLocation("Asia/Jakarta")
-	reseller.CreatedAt = time.Now().In(loc)
+	reseller.KTP = filePath		
 	reseller, err = s.Repo.CreateReseller(reseller)
 	if err != nil {
 		return reseller, err
@@ -99,12 +98,6 @@ func (s *ResellerService) UpdateReseller(id string, reqReseller *model.Reseller)
 		return nil, err
 	}
 
-	reseller.Fullname = reqReseller.Fullname
-	reseller.WhatsappNo = reqReseller.WhatsappNo
-	reseller.WhatsappLink = reqReseller.WhatsappLink
-	reseller.Email = reqReseller.Email
-	reseller.NIK = reqReseller.NIK
-	reseller.Address = reqReseller.Address
 	reseller.StatusID = reqReseller.StatusID
 	err = s.Repo.UpdateReseller(reseller)
 	if err != nil {

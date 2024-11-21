@@ -40,11 +40,7 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("ktp")
-	if err != nil {
-		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
-		return
-	}
+	file, _ := c.FormFile("ktp")	
 
 	reseller, err := h.Service.CreateReseller(c, reqReseller, file)
 	if err != nil {

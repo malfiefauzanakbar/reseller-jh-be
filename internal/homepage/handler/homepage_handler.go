@@ -51,11 +51,7 @@ func (h *HomepageHandler) UpdateHomepage(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("banner_image")
-	if err != nil {
-		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
-		return
-	}
+	file, _ := c.FormFile("banner_image")	
 
 	homepage, err := h.Service.UpdateHomepage(c, &reqHomepage, file)
 	if err != nil {
