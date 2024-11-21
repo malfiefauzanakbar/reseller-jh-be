@@ -32,10 +32,12 @@ func NewResellerService(repo *repository.ResellerRepository) *ResellerService {
 }
 
 func (s *ResellerService) CreateReseller(c *gin.Context, reqReseller request.ReqCreateReseller, file *multipart.FileHeader) (reseller model.Reseller, err error) {
-	filePath, err := common.UploadFile(c, file, "")
-	if err != nil {
-		return reseller, err
-	}
+	if file != nil {
+		filePath, err := common.UploadFile(c, file, "")
+		if err != nil {
+			return reseller, err
+		}
+	}	
 
 	reseller.Fullname = reqReseller.Fullname
 	reseller.WhatsappNo = reqReseller.WhatsappNo

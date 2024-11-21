@@ -33,10 +33,12 @@ func (s *HomepageService) GetHomepage() (homepage *model.Homepage, err error) {
 }
 
 func (s *HomepageService) UpdateHomepage(c *gin.Context, reqHomepage *request.ReqHomepage, file *multipart.FileHeader) (homepage *model.Homepage, err error) {
-	filePath, err := common.UploadFile(c, file, "bannerImage")
-	if err != nil {
-		return nil, err
-	}	
+	if file != nil {
+		filePath, err := common.UploadFile(c, file, "bannerImage")
+		if err != nil {
+			return nil, err
+		}
+	}		
 
 	homepage, err = s.Repo.GetHomepage()
 	if err != nil {
