@@ -5,10 +5,13 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"io"
 	mathrand "math/rand"
 	"mime/multipart"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -148,4 +151,25 @@ func UploadFile(c *gin.Context, file *multipart.FileHeader, fileName string) (re
 	}
 
 	return resp, nil
+}
+
+func VerifyCaptcha(token string) bool {
+	secret := os.Getenv("RECAPTCHA_SECRET_KEY")
+	verificationURL := os.Getenv("RECAPTCHA_HOST")
+
+	resp, err := http.PostForm(verificationURL, url.Values{
+		"secret":   {secret},
+		"response": {token},
+	})
+
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	if err := json.NewDecoder(resp.Body); err != nil {
+		return false
+	}
+
+	return true
 }

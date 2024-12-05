@@ -6,11 +6,12 @@ type ReqReseller struct {
 	Type      string `form:"type"`
 }
 
-type ReqCreateReseller struct {	
-	Fullname     string         `form:"fullname"`
-	WhatsappNo   string         `form:"whatsapp_no"`
-	WhatsappLink string         `form:"whatsapp_link"`
-	Email        string         `form:"email"`
-	NIK          string         `form:"nik"`
-	Address      string         `form:"address"`	
+type ReqCreateReseller struct {
+	Fullname     string `form:"fullname"`
+	WhatsappNo   string `form:"whatsapp_no"`
+	WhatsappLink string `form:"whatsapp_link"`
+	Email        string `form:"email"`
+	NIK          string `form:"nik"`
+	Address      string `form:"address"`
+	CaptchaToken string `form:"captcha_token"`
 }

@@ -40,7 +40,12 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 		return
 	}
 
-	file, _ := c.FormFile("ktp")	
+	if !common.VerifyCaptcha(reqReseller.CaptchaToken) {
+		base.RespondError(c, http.StatusUnauthorized, constant.Unauthorized, "Invalid CAPTCHA")
+		return
+	}
+
+	file, _ := c.FormFile("ktp")
 
 	reseller, err := h.Service.CreateReseller(c, reqReseller, file)
 	if err != nil {
