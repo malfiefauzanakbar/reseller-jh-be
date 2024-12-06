@@ -33,6 +33,11 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
+	// if !common.VerifyCaptcha(reqUser.CaptchaToken) {
+	// 	base.RespondError(c, http.StatusUnauthorized, constant.Unauthorized, "Invalid CAPTCHA")
+	// 	return
+	// }
+
 	user, err := h.Service.Login(c, reqUser)
 	if err != nil {
 		common.Log.Error("Func Login: ", err)
@@ -55,15 +60,14 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&reqUser); err != nil {
 		common.Log.Error("Func ShouldBindJSON: ", err)
 
-		// resp := base.BaseResp{
-		// 	Status:  constant.Error,
-		// 	Message: err.Error(),
-		// }
-		// c.JSON(http.StatusBadRequest, resp)
-
 		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
+
+	// if !common.VerifyCaptcha(reqUser.CaptchaToken) {
+	// 	base.RespondError(c, http.StatusUnauthorized, constant.Unauthorized, "Invalid CAPTCHA")
+	// 	return
+	// }
 
 	user, err := h.Service.CreateUser(reqUser)
 	if err != nil {
@@ -77,11 +81,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		"data": user,
 	}).Info("CreateUser")
 
-	// resp := base.BaseResp{
-	// 	Status: constant.Success,
-	// 	Data:   user,
-	// }
-	// c.JSON(http.StatusCreated, resp)
 	base.RespondSuccess(c, user, nil)
 }
 

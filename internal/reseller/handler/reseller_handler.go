@@ -30,12 +30,6 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 	if err := c.ShouldBind(&reqReseller); err != nil {
 		common.Log.Error("Func ShouldBind: ", err)
 
-		// resp := base.BaseResp{
-		// 	Status:  constant.Error,
-		// 	Message: err.Error(),
-		// }
-		// c.JSON(http.StatusBadRequest, resp)
-
 		base.RespondError(c, http.StatusBadRequest, constant.BadRequest, err.Error())
 		return
 	}
@@ -59,11 +53,6 @@ func (h *ResellerHandler) CreateReseller(c *gin.Context) {
 		"data": reseller,
 	}).Info("CreateReseller")
 
-	// resp := base.BaseResp{
-	// 	Status: constant.Success,
-	// 	Data:   reseller,
-	// }
-	// c.JSON(http.StatusCreated, resp)
 	base.RespondSuccess(c, reseller, nil)
 }
 
