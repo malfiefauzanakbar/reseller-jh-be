@@ -5,9 +5,9 @@ import (
 	databases "reseller-jh-be/database"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 type Application struct {
@@ -22,8 +22,8 @@ func NewApp(cfg *config.Config) *Application {
 	r.Static("/uploads", "./uploads")
 	r.Use(sessions.Sessions("session", store))
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowOrigins:     []string{"http://localhost:3000", "https://reseller.jimshoneyofficial.co.id"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "token"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
