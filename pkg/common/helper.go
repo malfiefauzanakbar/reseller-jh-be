@@ -4,8 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"encoding/base64"
-	"encoding/json"
+	"encoding/base64"	
 	"errors"
 	"io"
 	mathrand "math/rand"
@@ -17,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"fmt"
 
 	"reseller-jh-be/base"
 
@@ -157,19 +157,26 @@ func VerifyCaptcha(token string) bool {
 	secret := os.Getenv("RECAPTCHA_SECRET_KEY")
 	verificationURL := os.Getenv("RECAPTCHA_HOST")
 
+	fmt.Println("Verification URL:", verificationURL)
+	fmt.Println("Secret Key:", secret)
+
 	resp, err := http.PostForm(verificationURL, url.Values{
 		"secret":   {secret},
 		"response": {token},
 	})
 
 	if err != nil {
+		fmt.Println("Error making POST request:", err)
 		return false
 	}
 	defer resp.Body.Close()
 
-	if err := json.NewDecoder(resp.Body); err != nil {
+	fmt.Println("Response Status Code:", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("Non-200 status code:", resp.StatusCode)
 		return false
 	}
 
+	// Continue processing the response as needed
 	return true
 }

@@ -17,8 +17,8 @@ func RegisterRoute(app *internal.Application) {
 		resellerRoutes := route.Group("/reseller")
 		// resellerRoutes.Use(common.AuthMiddleware())
 		{
-			resellerRoutes.POST("/", resellerHandler.CreateReseller)
-			resellerRoutes.GET("/", resellerHandler.GetAllReseller)
+			resellerRoutes.POST("/create", resellerHandler.CreateReseller)
+			resellerRoutes.GET("/list", resellerHandler.GetAllReseller)
 			resellerRoutes.GET("/:id", resellerHandler.GetReseller)
 			resellerRoutes.PUT("/:id", resellerHandler.UpdateReseller)
 			resellerRoutes.PUT("/read/:id", resellerHandler.ReadReseller)
