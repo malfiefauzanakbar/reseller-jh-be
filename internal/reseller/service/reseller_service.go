@@ -190,22 +190,24 @@ func (s *ResellerService) ExportExcelResellers(reqReseller request.ReqReseller) 
 
 	f.SetCellValue(sheetName, "A3", "Nama Lengkap")
 	f.SetCellValue(sheetName, "B3", "Whatsapp")
-	f.SetCellValue(sheetName, "C3", "NIK")
-	f.SetCellValue(sheetName, "D3", "Alamat")
-	f.SetCellValue(sheetName, "E3", "Status")
-	f.SetCellValue(sheetName, "F3", "Email")
-	f.SetCellValue(sheetName, "G3", "Tanggal Daftar")
+	f.SetCellValue(sheetName, "C3", "Alamat")
+	f.SetCellValue(sheetName, "D3", "Status")
+	f.SetCellValue(sheetName, "E3", "Email")
+	f.SetCellValue(sheetName, "F3", "Tanggal Daftar")
+	f.SetCellValue(sheetName, "G3", "Kami penasaran, dari mana anda mengenal Jims Honey")
+	f.SetCellValue(sheetName, "H3", "⁠Alasan ingin join Reseller Jims Honey")
 
 	for i, reseller := range resellers {
 		row := i + 4
 		formattedCreatedAt := reseller.CreatedAt.Format("02 Jan 2006")
 		f.SetCellValue(sheetName, "A"+strconv.Itoa(row), reseller.Fullname)
 		f.SetCellValue(sheetName, "B"+strconv.Itoa(row), reseller.WhatsappNo)
-		f.SetCellValue(sheetName, "C"+strconv.Itoa(row), reseller.NIK)
-		f.SetCellValue(sheetName, "D"+strconv.Itoa(row), reseller.Address)
-		f.SetCellValue(sheetName, "E"+strconv.Itoa(row), reseller.StatusName)
-		f.SetCellValue(sheetName, "F"+strconv.Itoa(row), reseller.Email)
-		f.SetCellValue(sheetName, "G"+strconv.Itoa(row), formattedCreatedAt)
+		f.SetCellValue(sheetName, "C"+strconv.Itoa(row), reseller.Address)
+		f.SetCellValue(sheetName, "D"+strconv.Itoa(row), reseller.StatusName)
+		f.SetCellValue(sheetName, "E"+strconv.Itoa(row), reseller.Email)
+		f.SetCellValue(sheetName, "F"+strconv.Itoa(row), formattedCreatedAt)
+		f.SetCellValue(sheetName, "G"+strconv.Itoa(row), reseller.WhereDidYouKnow)
+		f.SetCellValue(sheetName, "H"+strconv.Itoa(row), reseller.ReasonsToJoin)
 	}
 
 	if _, err := os.Stat("./uploads"); os.IsNotExist(err) {
